@@ -1,0 +1,242 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Q2_conv_func_methods</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-05"><meta name="DC.source" content="Q2_conv_func_methods.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+f = 200;         <span class="comment">% frequency of signal</span>
+
+fs = 1000;
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+fana = 10000;         <span class="comment">% 10kHz sampling frequency for simulating analog signal</span>
+Tana = 1/fana;
+tana = tmin:Tana:tmax;
+xanalog = fx(tana,f);
+</pre><pre class="codeinput"><span class="comment">%%%% sampled signal spike train</span>
+xdt = zeros(1,length(tana));
+<span class="keyword">for</span> i = 1:length(tana)
+    <span class="keyword">if</span> mod(tana(i),T) == 0   <span class="comment">% for t = nT</span>
+        xdt(i) = fx(tana(i),f);      <span class="comment">%take xdt = x(nT) = x(t)</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure(1)
+hold <span class="string">on</span>;
+stem(tana,xdt,<span class="string">'.'</span>);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title([<span class="string">'sampled signal spike train'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="Q2_conv_func_methods_01.png" alt=""> <pre class="codeinput"><span class="comment">%%%% linear interpolation</span>
+ht_li = zeros(1,length(tana));
+ht_li(1:11) = 0:fs/fana:1;     <span class="comment">% for the first 11 values, it should be increasing values like 0 0.1 0.2 ...1</span>
+ht_li(12:21) = 0.9:-fs/fana:0; <span class="comment">% for the next 10 values, it shoud be decreased</span>
+<span class="comment">% figure()</span>
+<span class="comment">% plot(tana,ht_li);</span>
+
+
+xlt_conv = conv(xdt,ht_li);             <span class="comment">% we do the convolution</span>
+xlt = xlt_conv(11:length(tana)+10);     <span class="comment">% Due to the conv function will give a signal</span>
+                                        <span class="comment">% (2N-1) long, and we have shifted the ht from [-T,T] to [0,2T],</span>
+                                        <span class="comment">% so we should also shift our conv signal and</span>
+                                        <span class="comment">% cut it to have the same length</span>
+<span class="comment">% figure()</span>
+<span class="comment">% plot(xlt_conv);</span>
+
+figure()
+hold <span class="string">on</span>;
+plot(tana,xlt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title([<span class="string">'linear interpolation'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="Q2_conv_func_methods_02.png" alt=""> <pre class="codeinput"><span class="comment">%%%% Ideal Low pass filtering</span>
+ht_sinc = zeros(1,length(tana));
+t_trunc = -10*T:Tana:10*T;    <span class="comment">% we truncate the function in +-10T</span>
+hht = sinc(t_trunc ./ T);
+ht_sinc(1:length(hht)) = hht;
+<span class="comment">% figure()</span>
+<span class="comment">% plot(tana,ht_sinc);</span>
+
+xrt_conv = conv(xdt,ht_sinc);
+xrt = xrt_conv(101:length(tana)+100);
+
+<span class="comment">% figure()</span>
+<span class="comment">% plot(xrt_conv);</span>
+
+figure()
+hold <span class="string">on</span>;
+plot(tana,xrt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title([<span class="string">'Ideal Low pass filtering'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="Q2_conv_func_methods_03.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+close all;
+clear all;
+f = 200;         % frequency of signal
+
+fs = 1000;
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+fana = 10000;         % 10kHz sampling frequency for simulating analog signal
+Tana = 1/fana;  
+tana = tmin:Tana:tmax;
+xanalog = fx(tana,f);
+
+
+
+%%
+%%%% sampled signal spike train
+xdt = zeros(1,length(tana));         
+for i = 1:length(tana)
+    if mod(tana(i),T) == 0   % for t = nT
+        xdt(i) = fx(tana(i),f);      %take xdt = x(nT) = x(t)
+    end
+end
+figure(1)
+hold on;
+stem(tana,xdt,'.');
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title(['sampled signal spike train']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+
+
+
+%%
+%%%% linear interpolation
+ht_li = zeros(1,length(tana));
+ht_li(1:11) = 0:fs/fana:1;     % for the first 11 values, it should be increasing values like 0 0.1 0.2 ...1 
+ht_li(12:21) = 0.9:-fs/fana:0; % for the next 10 values, it shoud be decreased
+% figure()
+% plot(tana,ht_li);
+
+
+xlt_conv = conv(xdt,ht_li);             % we do the convolution
+xlt = xlt_conv(11:length(tana)+10);     % Due to the conv function will give a signal 
+                                        % (2N-1) long, and we have shifted the ht from [-T,T] to [0,2T],
+                                        % so we should also shift our conv signal and
+                                        % cut it to have the same length
+% figure()
+% plot(xlt_conv);
+
+figure()
+hold on;
+plot(tana,xlt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title(['linear interpolation']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+
+%%
+%%%% Ideal Low pass filtering
+ht_sinc = zeros(1,length(tana));
+t_trunc = -10*T:Tana:10*T;    % we truncate the function in +-10T
+hht = sinc(t_trunc ./ T);
+ht_sinc(1:length(hht)) = hht;
+% figure()
+% plot(tana,ht_sinc);
+
+xrt_conv = conv(xdt,ht_sinc);
+xrt = xrt_conv(101:length(tana)+100);
+
+% figure()
+% plot(xrt_conv);
+
+figure()
+hold on;
+plot(tana,xrt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title(['Ideal Low pass filtering']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+
+##### SOURCE END #####
+--></body></html>

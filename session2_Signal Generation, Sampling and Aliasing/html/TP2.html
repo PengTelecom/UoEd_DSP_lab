@@ -1,0 +1,493 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>TP2</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-08"><meta name="DC.source" content="TP2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Signal Generation &amp; Sampling</a></li><li><a href="#3">1.1</a></li><li><a href="#4">1.2</a></li><li><a href="#5">1.3</a></li><li><a href="#6">1.4</a></li><li><a href="#7">Reconstruction filters</a></li><li><a href="#8">2.1</a></li><li><a href="#9">Frequency domain view of sampling</a></li><li><a href="#10">3.1</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+</pre><h2 id="2">Signal Generation &amp; Sampling</h2><h2 id="3">1.1</h2><pre class="codeinput">N = 64;           <span class="comment">% 64 data points</span>
+fs = 1000;         <span class="comment">% 1kHz sampling frequency</span>
+T = 1/fs;          <span class="comment">% sample period</span>
+f = 40;           <span class="comment">% signal frequency in Hz</span>
+n = 0:N-1;      <span class="comment">% discrete time vector</span>
+
+x = cos(2*pi*f*n*T);
+stem(n*T,x);
+title(<span class="string">'stem 40Hz cosine'</span>)
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+</pre><img vspace="5" hspace="5" src="TP2_01.png" alt=""> <h2 id="4">1.2</h2><pre class="codeinput">plot(n*T,x);
+title(<span class="string">'plot 40Hz cosine'</span>)
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+</pre><img vspace="5" hspace="5" src="TP2_02.png" alt=""> <h2 id="5">1.3</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+fs = 1000;         <span class="comment">% 1kHz sampling frequency</span>
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+
+t = tmin :T :tmax;
+farray= [200,400,600,800];
+<span class="keyword">for</span> i=1:4
+    f = farray(i);
+    x = cos(2*pi*f*t);
+    figure(i)
+    hold <span class="string">on</span>;
+    stem(t,x);
+    plot(t,x);
+    tmin = 0;
+    tmax = 0.01;
+    axis([tmin 0.01 , -1 1])
+    title([num2str(f),<span class="string">'Hz cosine with fs='</span>,num2str(fs),<span class="string">'Hz'</span>])
+    xlabel(<span class="string">'Time'</span>)
+    ylabel(<span class="string">'x(nT)'</span>)
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP2_03.png" alt=""> <img vspace="5" hspace="5" src="TP2_04.png" alt=""> <img vspace="5" hspace="5" src="TP2_05.png" alt=""> <img vspace="5" hspace="5" src="TP2_06.png" alt=""> <h2 id="6">1.4</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+fs = 10000;         <span class="comment">% 10kHz sampling frequency</span>
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+farray= [200,400,600,800];
+<span class="keyword">for</span> i=1:4
+    f = farray(i);
+    x1000 = cos(2*pi*f*t*10);
+    x10000 = cos(2*pi*f*t);
+
+    figure(i)
+    hold <span class="string">on</span>;
+    plot(10*t,x1000,<span class="string">'b'</span>);
+    plot(t,x10000,<span class="string">'r'</span>);
+    axis([0 0.01 , -1 1])
+    title([num2str(f),<span class="string">'Hz cosine'</span>])
+    xlabel(<span class="string">'Time'</span>)
+    ylabel(<span class="string">'x(nT)'</span>)
+    legend(<span class="string">'fs=1000'</span>,<span class="string">'fs=10000'</span>)
+    hold <span class="string">off</span>;
+
+<span class="comment">%     soundsc(interp(x1000,8),8*fs/10);</span>
+<span class="comment">%     soundsc(interp(x10000,8),8*fs);</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP2_07.png" alt=""> <img vspace="5" hspace="5" src="TP2_08.png" alt=""> <img vspace="5" hspace="5" src="TP2_09.png" alt=""> <img vspace="5" hspace="5" src="TP2_10.png" alt=""> <h2 id="7">Reconstruction filters</h2><h2 id="8">2.1</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+f = 200;         <span class="comment">% frequency of signal</span>
+
+fs = 1000;
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+
+fana = 10000;         <span class="comment">% 10kHz sampling frequency for simulating analog signal</span>
+Tana = 1/fana;
+tana = tmin:Tana:tmax;
+xanalog = fx(tana,f);
+
+<span class="comment">%%%% sampled signal spike train</span>
+xdt = zeros(1,length(tana));
+<span class="keyword">for</span> i = 1:length(tana)
+    <span class="keyword">if</span> mod(tana(i),T) == 0   <span class="comment">% for t = nT</span>
+        xdt(i) = fx(tana(i),f);      <span class="comment">%take xdt = x(nT) = x(t)</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure(1)
+hold <span class="string">on</span>;
+stem(tana,xdt,<span class="string">'.'</span>);
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title([<span class="string">'sampled signal spike train'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+
+
+<span class="comment">%%%% linear interpolation</span>
+xlt = zeros(1,length(tana));
+<span class="keyword">for</span> i = 1:length(tana)
+    n = floor(tana(i)./T-1):1:floor(tana(i)./T+ 1);         <span class="comment">%reduce the -inf_+inf to limited value</span>
+    ht = (T-abs(tana(i)-n*T))./T;           <span class="comment">% calculate the vector of h(t-nT) for reduced vector x(tn)</span>
+    ht(ht&lt;0) = 0 ;
+    <span class="keyword">for</span> j = 1:length(n)
+        xlt(i) = xlt(i) + fx(n(j)*T,f)*ht(j);       <span class="comment">%cumulate the x(tn)h(t-nT)</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure(3)
+hold <span class="string">on</span>;
+plot(tana,xlt);
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title([<span class="string">'linear interpolation'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+
+
+
+<span class="comment">%%%% Ideal Low pass filtering</span>
+xrt = zeros(1,length(tana));
+n = (tmax-tmin)*fs;      <span class="comment">%calculate the possible n based on the length of time and sampling frequency</span>
+<span class="keyword">for</span> i = 1:length(tana)
+    <span class="keyword">for</span> j = 0:n+1
+        xrt(i) = xrt(i) + fx(j*T,f)*sinc((tana(i)-j*T)./T);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure(4)
+hold <span class="string">on</span>;
+plot(tana,xrt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title([<span class="string">'Ideal Low pass filtering'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+
+<span class="comment">%</span>
+<span class="comment">% soundsc(interp(xdt,8),8*fs)</span>
+<span class="comment">% soundsc(interp(xlt,8),8*fs)</span>
+<span class="comment">% soundsc(interp(xrt,8),8*fs)</span>
+</pre><img vspace="5" hspace="5" src="TP2_11.png" alt=""> <img vspace="5" hspace="5" src="TP2_12.png" alt=""> <img vspace="5" hspace="5" src="TP2_13.png" alt=""> <h2 id="9">Frequency domain view of sampling</h2><h2 id="10">3.1</h2><pre class="codeinput">close <span class="string">all</span>;
+
+figure()
+subplot(211)
+hold <span class="string">on</span>;
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title([<span class="string">'analog signal'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+subplot(212)
+fmagplot(xanalog,Tana);
+
+
+figure()
+subplot(211)
+hold <span class="string">on</span>;
+stem(tana,xdt,<span class="string">'.'</span>);
+axis([0 0.01 , -1 1])
+title([<span class="string">'sampled signal spike train'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+subplot(212)
+fmagplot(xdt,Tana);
+
+
+figure()
+subplot(211)
+hold <span class="string">on</span>;
+plot(tana,xlt);
+axis([0 0.01 , -1 1])
+title([<span class="string">'linear interpolation'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+subplot(212)
+fmagplot(xlt,Tana);
+
+
+figure()
+subplot(211)
+hold <span class="string">on</span>;
+plot(tana,xrt);
+axis([0 0.01 , -1 1])
+title([<span class="string">'Ideal low pass filtering'</span>])
+xlabel(<span class="string">'Time'</span>)
+ylabel(<span class="string">'x(nT)'</span>)
+hold <span class="string">off</span>;
+subplot(212)
+fmagplot(xrt,Tana);
+</pre><img vspace="5" hspace="5" src="TP2_14.png" alt=""> <img vspace="5" hspace="5" src="TP2_15.png" alt=""> <img vspace="5" hspace="5" src="TP2_16.png" alt=""> <img vspace="5" hspace="5" src="TP2_17.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+close all;
+clear all;
+
+%% Signal Generation & Sampling
+%% 1.1
+N = 64;           % 64 data points
+fs = 1000;         % 1kHz sampling frequency 
+T = 1/fs;          % sample period 
+f = 40;           % signal frequency in Hz 
+n = 0:N-1;      % discrete time vector 
+ 
+x = cos(2*pi*f*n*T);
+stem(n*T,x); 
+title('stem 40Hz cosine') 
+xlabel('Time')  
+ylabel('x(nT)')
+
+%% 1.2
+plot(n*T,x);
+title('plot 40Hz cosine') 
+xlabel('Time')  
+ylabel('x(nT)')
+
+%% 1.3
+close all;
+clear all;
+
+fs = 1000;         % 1kHz sampling frequency 
+T = 1/fs;  
+tmin = 0;
+tmax = 1;
+
+t = tmin :T :tmax;
+farray= [200,400,600,800];
+for i=1:4
+    f = farray(i);
+    x = cos(2*pi*f*t);
+    figure(i)
+    hold on;
+    stem(t,x); 
+    plot(t,x);
+    tmin = 0;
+    tmax = 0.01;
+    axis([tmin 0.01 , -1 1])
+    title([num2str(f),'Hz cosine with fs=',num2str(fs),'Hz']) 
+    xlabel('Time')  
+    ylabel('x(nT)')
+    hold off;
+end
+
+%% 1.4  
+close all;
+clear all;
+
+fs = 10000;         % 10kHz sampling frequency 
+T = 1/fs;  
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+farray= [200,400,600,800];
+for i=1:4
+    f = farray(i);
+    x1000 = cos(2*pi*f*t*10);
+    x10000 = cos(2*pi*f*t);
+
+    figure(i)
+    hold on;
+    plot(10*t,x1000,'b');
+    plot(t,x10000,'r');
+    axis([0 0.01 , -1 1])
+    title([num2str(f),'Hz cosine']) 
+    xlabel('Time')  
+    ylabel('x(nT)')
+    legend('fs=1000','fs=10000')
+    hold off;
+    
+%     soundsc(interp(x1000,8),8*fs/10);
+%     soundsc(interp(x10000,8),8*fs);
+end
+
+%% Reconstruction filters 
+%% 2.1
+close all;
+clear all;
+f = 200;         % frequency of signal
+
+fs = 1000;
+T = 1/fs;
+tmin = 0;
+tmax = 1;
+t = tmin :T :tmax;
+
+
+fana = 10000;         % 10kHz sampling frequency for simulating analog signal
+Tana = 1/fana;  
+tana = tmin:Tana:tmax;
+xanalog = fx(tana,f);
+
+%%%% sampled signal spike train
+xdt = zeros(1,length(tana));         
+for i = 1:length(tana)
+    if mod(tana(i),T) == 0   % for t = nT
+        xdt(i) = fx(tana(i),f);      %take xdt = x(nT) = x(t)
+    end
+end
+figure(1)
+hold on;
+stem(tana,xdt,'.');
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title(['sampled signal spike train']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+
+%%%% linear interpolation
+xlt = zeros(1,length(tana));
+for i = 1:length(tana)
+    n = floor(tana(i)./T-1):1:floor(tana(i)./T+ 1);         %reduce the -inf_+inf to limited value
+    ht = (T-abs(tana(i)-n*T))./T;           % calculate the vector of h(t-nT) for reduced vector x(tn)
+    ht(ht<0) = 0 ;
+    for j = 1:length(n)
+        xlt(i) = xlt(i) + fx(n(j)*T,f)*ht(j);       %cumulate the x(tn)h(t-nT)
+    end
+end
+figure(3)
+hold on;
+plot(tana,xlt);
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title(['linear interpolation']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+
+
+%%%% Ideal Low pass filtering
+xrt = zeros(1,length(tana));
+n = (tmax-tmin)*fs;      %calculate the possible n based on the length of time and sampling frequency
+for i = 1:length(tana)
+    for j = 0:n+1
+        xrt(i) = xrt(i) + fx(j*T,f)*sinc((tana(i)-j*T)./T);
+    end
+end
+
+figure(4)
+hold on;
+plot(tana,xrt);
+plot(tana,xanalog);
+axis([0 0.01 , -1.5 1.5])
+title(['Ideal Low pass filtering']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+
+% 
+% soundsc(interp(xdt,8),8*fs)
+% soundsc(interp(xlt,8),8*fs)
+% soundsc(interp(xrt,8),8*fs)
+%% Frequency domain view of sampling
+%% 3.1
+close all;
+
+figure()
+subplot(211)
+hold on;
+plot(tana,xanalog);
+axis([0 0.01 , -1 1])
+title(['analog signal']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+subplot(212)
+fmagplot(xanalog,Tana);
+
+
+figure()
+subplot(211)
+hold on;
+stem(tana,xdt,'.');
+axis([0 0.01 , -1 1])
+title(['sampled signal spike train']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+subplot(212)
+fmagplot(xdt,Tana);
+
+
+figure()
+subplot(211)
+hold on;
+plot(tana,xlt);
+axis([0 0.01 , -1 1])
+title(['linear interpolation']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+subplot(212)
+fmagplot(xlt,Tana);
+
+
+figure()
+subplot(211)
+hold on;
+plot(tana,xrt);
+axis([0 0.01 , -1 1])
+title(['Ideal low pass filtering']) 
+xlabel('Time')  
+ylabel('x(nT)')
+hold off;
+subplot(212)
+fmagplot(xrt,Tana);
+
+
+
+##### SOURCE END #####
+--></body></html>

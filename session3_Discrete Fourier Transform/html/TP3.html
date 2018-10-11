@@ -1,0 +1,1208 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>DFT of simple elementary signals</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-10"><meta name="DC.source" content="TP3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>DFT of simple elementary signals</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">1.1</a></li><li><a href="#2">1.2</a></li><li><a href="#3">1.3</a></li><li><a href="#4">2.1</a></li><li><a href="#5">2.2</a></li><li><a href="#6">2.3</a></li><li><a href="#7">2.4</a></li><li><a href="#8">Implementation tricks for the DFT</a></li><li><a href="#9">3 The Fast Fourier Transform</a></li><li><a href="#10">the definition method</a></li><li><a href="#11">the matrix method</a></li><li><a href="#12">the DFT method</a></li><li><a href="#13">4 Two DFTs for the price of one</a></li><li><a href="#14">5 A faster DFT for a real sequence</a></li><li><a href="#15">Applications of the DFT to images</a></li><li><a href="#16">1. Phase manipulation</a></li><li><a href="#17">2. Displace an image using the FFT</a></li><li><a href="#18">my shift image program</a></li><li><a href="#19">Use move_images func</a></li><li><a href="#20">3. Simple Fourier Filtering</a></li></ul></div><h2 id="1">1.1</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+L = 100;                         <span class="comment">% length of signal i.e. 100 samples</span>
+Fs = 1000;                       <span class="comment">% sampling frequency in Hz</span>
+n = [0:L-1];
+t = n/Fs;                        <span class="comment">% time axis in seconds</span>
+T = 0.11;                        <span class="comment">% sine period</span>
+x = sin(2*pi*t/T);               <span class="comment">% the first 100 samples</span>
+
+figure(1)
+hold <span class="string">on</span>;
+title([<span class="string">'the generated signal f='</span>,num2str(1/T),<span class="string">'Hz'</span>]);
+xlabel(<span class="string">'Time(s)'</span>);
+ylabel(<span class="string">'Signal'</span>);
+plot(t,x);
+hold <span class="string">off</span>;
+
+dft = fft(x);
+dft_dB = 20 * log10(abs(dft));
+df = Fs/L;
+f = n*df;
+
+figure(2)
+hold <span class="string">on</span>;
+title([<span class="string">'magnitude DFT of signal f='</span>,num2str(1/T),<span class="string">'Hz'</span>]);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'the magnitude of DFT(dB)'</span>);
+stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),<span class="string">'.'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_01.png" alt=""> <img vspace="5" hspace="5" src="TP3_02.png" alt=""> <h2 id="2">1.2</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+L = 100;                         <span class="comment">% length of signal i.e. 100 samples</span>
+Fs = 1000;                       <span class="comment">% sampling frequency in Hz</span>
+n = [0:L-1];
+t = n/Fs;                        <span class="comment">% time axis in seconds</span>
+
+T = [0.11, 0.011, 0.005, 0.00125];
+<span class="keyword">for</span> i = 1:length(T)
+    x =  sin(2*pi*t/T(i));
+    figure(i)
+
+    subplot(121)
+    hold <span class="string">on</span>;
+    title([<span class="string">'the generated signal f='</span>,num2str(1/T(i)),<span class="string">' Hz'</span>]);
+    xlabel(<span class="string">'Time(s)'</span>);
+    ylabel(<span class="string">'Signal'</span>);
+    plot(t,x);
+    hold <span class="string">off</span>;
+
+    dft = fft(x);
+    dft_dB = 20 * log10(abs(dft));
+    df = Fs/L;
+    f = n*df;
+
+    subplot(122)
+    hold <span class="string">on</span>;
+    title([<span class="string">'magnitude DFT of signal f='</span>,num2str(1/T(i)),<span class="string">' Hz'</span>]);
+    xlabel(<span class="string">'Frequency(Hz)'</span>);
+    ylabel(<span class="string">'the magnitude of DFT(dB)'</span>);
+    stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),<span class="string">'.'</span>);
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP3_03.png" alt=""> <img vspace="5" hspace="5" src="TP3_04.png" alt=""> <img vspace="5" hspace="5" src="TP3_05.png" alt=""> <img vspace="5" hspace="5" src="TP3_06.png" alt=""> <h2 id="3">1.3</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+L = 100;                         <span class="comment">% length of signal i.e. 100 samples</span>
+Fs = 1000;                       <span class="comment">% sampling frequency in Hz</span>
+n = [0:L-1];
+t = n/Fs;                        <span class="comment">% time axis in seconds</span>
+
+T = [0.11, 0.011, 0.005,0.00125];
+N = [200, 1000];
+<span class="keyword">for</span> i = 1:length(T)
+    x =  sin(2*pi*t/T(i));
+
+    x_pad_200 = [x,zeros(1,N(1)-length(x))];
+    x_pad_1000 = [x,zeros(1,N(2)-length(x))];
+
+    <span class="comment">%x_pad_200 = [zeros(1,N(1)-length(x)),x];</span>
+    <span class="comment">%x_pad_1000 = [zeros(1,N(2)-length(x)),x];</span>
+
+    <span class="comment">% with this code, we can see that it doesnt matter if we padding the</span>
+    <span class="comment">% zeros before or after the signal. we can even put our signal between</span>
+    <span class="comment">% the padding zeros.</span>
+
+    figure(i)
+    subplot(211)
+    hold <span class="string">on</span>;
+    title([<span class="string">'the generated signal T='</span>,num2str(T(i))]);
+    xlabel(<span class="string">'Time(s)'</span>);
+    ylabel(<span class="string">'Signal'</span>);
+    plot(t,x);
+    hold <span class="string">off</span>;
+
+<span class="comment">%generate the ylable values which are the magnitude</span>
+    dft = fft(x);
+    dft_dB = 20 * log10(abs(dft));
+
+    dft_pad_200 = fft(x_pad_200);
+    dft_pad_200_dB = 20 * log10(abs(dft_pad_200));
+
+    dft_pad_1000 = fft(x_pad_1000);
+    dft_pad_1000_dB = 20 * log10(abs(dft_pad_1000));
+
+<span class="comment">% generate the xlabel values</span>
+    df = Fs/L;
+    f = n*df;
+
+    n_pad_200 = [0:N(1)-1];
+    df_pad_200 = Fs/N(1);
+    f_pad_200 = n_pad_200 * df_pad_200;
+
+    n_pad_1000 = [0:N(2)-1];
+    df_pad_1000 = Fs/N(2);
+    f_pad_1000 = n_pad_1000 * df_pad_1000;
+
+    subplot(212)
+    hold <span class="string">on</span>;
+    title(<span class="string">'magnitude of DFT of signal'</span>);
+    xlabel(<span class="string">'Frequency(Hz)'</span>);
+    ylabel(<span class="string">'the magnitude of DFT(dB)'</span>);
+    stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),<span class="string">'.'</span>);
+    plot(f_pad_200(1:length(f_pad_200)/2),dft_pad_200_dB(1:length(dft_pad_200_dB)/2),<span class="string">'r'</span>);
+    plot(f_pad_1000(1:length(f_pad_1000)/2),dft_pad_1000_dB(1:length(dft_pad_1000_dB)/2),<span class="string">'g'</span>);
+    legend(<span class="string">'x'</span>,<span class="string">'x pad 200'</span>,<span class="string">'x pad 1000'</span>)
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP3_07.png" alt=""> <img vspace="5" hspace="5" src="TP3_08.png" alt=""> <img vspace="5" hspace="5" src="TP3_09.png" alt=""> <img vspace="5" hspace="5" src="TP3_10.png" alt=""> <h2 id="4">2.1</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+n = [0, 1, 10, 50, 80];
+<span class="keyword">for</span> i = 1:length(n)
+    x = xn(n(i));
+    t = 0:length(x)-1;
+    xf = fft(x);
+
+    figure(i);
+    subplot(311);
+    hold <span class="string">on</span>;
+    title([<span class="string">'impulse signal x['</span>,num2str(n(i)),<span class="string">']'</span>]);
+    xlabel(<span class="string">'n'</span>);
+    ylabel(<span class="string">'x[n]'</span>);
+    plot(t,x);
+    hold <span class="string">off</span>;
+
+    subplot(312);
+    hold <span class="string">on</span>;
+    title([<span class="string">'the DFT of impulse signal x['</span>,num2str(n(i)),<span class="string">']'</span>]);
+    xlabel(<span class="string">'k'</span>);
+    ylabel(<span class="string">'magnitude of X[k](linear scale)'</span>);
+    plot(abs(xf));
+    hold <span class="string">off</span>;
+
+    subplot(313);
+    hold <span class="string">on</span>;
+    title([<span class="string">'the DFT of impulse signal x['</span>,num2str(n(i)),<span class="string">']'</span>]);
+    xlabel(<span class="string">'k'</span>);
+    ylabel(<span class="string">'phase of X[k]'</span>);
+    plot(unwrap(phase(xf)));
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP3_11.png" alt=""> <img vspace="5" hspace="5" src="TP3_12.png" alt=""> <img vspace="5" hspace="5" src="TP3_13.png" alt=""> <img vspace="5" hspace="5" src="TP3_14.png" alt=""> <img vspace="5" hspace="5" src="TP3_15.png" alt=""> <h2 id="5">2.2</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+centre = 30;
+width = 60;
+x_tri = triangle(centre, width);
+xf_tri = fft(x_tri);
+xf_tri_mag = 20*log10(abs(xf_tri));
+xf_tri_pha = phase(xf_tri);
+
+figure()
+subplot(311);
+hold <span class="string">on</span>;
+title([<span class="string">'triangle signal center at '</span>,num2str(centre),<span class="string">' width='</span>,num2str(width)]);
+xlabel(<span class="string">'sampled number'</span>);
+ylabel(<span class="string">'x[n]'</span>);
+plot([0:99],x_tri);
+hold <span class="string">off</span>;
+
+subplot(312);
+hold <span class="string">on</span>;
+title([<span class="string">'DFT of triangle signal center at '</span>,num2str(centre),<span class="string">' width='</span>,num2str(width)]);
+xlabel(<span class="string">'k'</span>);
+ylabel(<span class="string">'magnitude of X[k] (dB)'</span>);
+stem([0:49],xf_tri_mag(1:50),<span class="string">'.'</span>);
+hold <span class="string">off</span>;
+
+subplot(313);
+hold <span class="string">on</span>;
+xlabel(<span class="string">'k'</span>);
+ylabel(<span class="string">'phase of X[k] (rad)'</span>);
+plot([0:49],xf_tri_pha(1:50));
+</pre><img vspace="5" hspace="5" src="TP3_16.png" alt=""> <h2 id="6">2.3</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x_tri = triangle(30, 60);
+xf_tri = fft(x_tri);
+n = [0, 1, 10, 50, 80];
+<span class="keyword">for</span> i = 1:length(n)
+    x = xn((n(i)+1));
+    xf = fft(x);
+    product = xf .* xf_tri;
+    resulting_signal = ifft(product);
+    figure(i);
+    hold <span class="string">on</span>;
+    title([<span class="string">'convlution of impluse x['</span>, num2str(n(i)), <span class="string">'] and triangle signals'</span>]);
+    xlabel(<span class="string">'n'</span>);
+    ylabel(<span class="string">'resulting signal'</span>);
+<span class="comment">%     plot([0:99],real(resulting_signal));</span>
+    stem([0:99],real(resulting_signal),<span class="string">'.'</span>);        <span class="comment">% due to matlab cannot start a serie from 0,</span>
+                                                    <span class="comment">% so we have a shift of</span>
+                                                    <span class="comment">% 2, because each</span>
+                                                    <span class="comment">% signal has a shift of</span>
+                                                    <span class="comment">% 1, and they did a</span>
+                                                    <span class="comment">% convlotion.</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP3_17.png" alt=""> <img vspace="5" hspace="5" src="TP3_18.png" alt=""> <img vspace="5" hspace="5" src="TP3_19.png" alt=""> <img vspace="5" hspace="5" src="TP3_20.png" alt=""> <img vspace="5" hspace="5" src="TP3_21.png" alt=""> <h2 id="7">2.4</h2><p>Circular convolution</p><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+x_tri = triangle(30, 60);
+xf_tri = fft(x_tri);
+
+product = xf_tri .* xf_tri;
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'inverse of the product of triangle signal DFT with itself'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'resulting signal'</span>);
+plot(real(ifft(product)));
+hold <span class="string">off</span>
+<span class="comment">% due to the circular convolution, so we met the problem of 'overlay' that at the</span>
+<span class="comment">% beginning of the signal, it is the sum of the fisrt several values of the</span>
+<span class="comment">% signal with the last several values of the signal.</span>
+
+<span class="comment">% in order to avoid this problem, we could pad enough 0s in the original</span>
+<span class="comment">% signals to seperate it in the circular conlution.</span>
+x_tri_pad = [x_tri,zeros(1,20)]; <span class="comment">% here I pad 20 zeros, because the bandwidth of</span>
+<span class="comment">% the triangle is 60, and it is a 100 length signal, which means there are</span>
+<span class="comment">% alreay 40 zeros, so we just need to add 20 zeros.</span>
+xf_tri_pad = fft(x_tri_pad);
+product_pad = xf_tri_pad .* xf_tri_pad;
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'inverse of the product of triangle signal padded DFT with itself'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'resulting signal'</span>);
+plot(real(ifft(product_pad)));
+hold <span class="string">off</span>;
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'convolution direct of triangle signal with itself'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'resulting signal'</span>);
+plot(cconv(x_tri,x_tri));
+hold <span class="string">off</span>;
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'compare the three signal'</span>);
+plot(cconv(x_tri,x_tri));
+plot(real(ifft(product)));
+plot(real(ifft(product_pad)));
+legend(<span class="string">'conv in time domain'</span>,<span class="string">'circular conv without padding 0s'</span>,<span class="string">'circular conv with padding 0s'</span>)
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_22.png" alt=""> <img vspace="5" hspace="5" src="TP3_23.png" alt=""> <img vspace="5" hspace="5" src="TP3_24.png" alt=""> <img vspace="5" hspace="5" src="TP3_25.png" alt=""> <h2 id="8">Implementation tricks for the DFT</h2><h2 id="9">3 The Fast Fourier Transform</h2><h2 id="10">the definition method</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+<span class="keyword">for</span> k = 1:N
+    DFTeven = 0;
+    DFTodd = 0;
+    <span class="keyword">for</span> n2 = 1 : N/2
+        DFTeven =DFTeven + x_tri(2*n2-1) * exp(-j*2*pi*(k-1)*n2 ./(N/2));
+        DFTodd =DFTodd +  x_tri(2*n2)* exp(-j*2*pi*(k-1)*n2 ./(N/2));
+        <span class="comment">% in matlab, the array starts from 1, so the x[0] is the first</span>
+        <span class="comment">% element in matlab, so here, even is 1 3 5.., and odd is 2 4 6..</span>
+    <span class="keyword">end</span>
+    XN(k) = DFTeven + exp(-j*2*pi*(k-1)./N) .* DFTodd;
+    <span class="comment">% be careful here the k should also star from 0,</span>
+<span class="keyword">end</span>
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the absolute value of the FFT with matlab fft()'</span>);
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend(<span class="string">'using whole length DFT'</span>,<span class="string">'using 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+
+x_rec = real(ifft(XN));
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the reconstruction signal'</span>);
+plot([0:99],real(ifft(xf_tri)));
+plot([0:97],x_rec(3:end)); <span class="comment">%here we shift to right by 2 units, because of the matlab start from 1 and then we have a shift of 1 for each than it cumulate to 2</span>
+legend(<span class="string">'the ifft of fft() matkab'</span>,<span class="string">'ifft of 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_26.png" alt=""> <img vspace="5" hspace="5" src="TP3_27.png" alt=""> <h2 id="11">the matrix method</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+x_even = x_tri(1:2:end);
+x_odd = x_tri(2:2:end);
+
+<span class="comment">% create a matrix of n2 rows and k columns to represent the exp term in the</span>
+<span class="comment">% formula</span>
+k = 0:N-1; <span class="comment">% be careful here the k start from 0!</span>
+n2 = 1:N/2;
+k_n2 = n2' * k;
+matrix = exp(-j*2*pi*k_n2/(N/2));       <span class="comment">% here the matrix is exp term</span>
+
+<span class="comment">% do the DFT</span>
+DFTeven = x_even * matrix;
+DFTodd = x_odd * matrix;
+XN = DFTeven + DFTodd .* exp(-j*2*pi*k/N);
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the absolute value of the FFT with matlab fft()'</span>);
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend(<span class="string">'using whole length DFT'</span>,<span class="string">'using 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+
+x_rec = real(ifft(XN));
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the reconstruction signal'</span>);
+plot([0:99],real(ifft(xf_tri)));
+plot([0:97],x_rec(3:end));
+legend(<span class="string">'the ifft of fft() matkab'</span>,<span class="string">'ifft of 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_28.png" alt=""> <img vspace="5" hspace="5" src="TP3_29.png" alt=""> <h2 id="12">the DFT method</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+x_even = x_tri(1:2:end);
+x_odd = x_tri(2:2:end);
+xf_even = [fft(x_even),fft(x_even)];
+xf_odd = [fft(x_odd),fft(x_odd)];
+
+
+<span class="keyword">for</span> k = 1: 100
+    XN(k) = xf_even(k) + exp(-j*2*pi*(k-1)./N) .* xf_odd(k);
+<span class="keyword">end</span>
+<span class="comment">% be careful here the k should start from 0!</span>
+
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the absolute value of the FFT with matlab fft()'</span>);
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend(<span class="string">'using whole length DFT'</span>,<span class="string">'using 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+
+figure()
+hold <span class="string">on</span>;
+title(<span class="string">'Compare the reconstruction signal'</span>);
+plot([0:99],real(ifft(xf_tri)));
+plot([0:99],real(ifft(XN)));
+legend(<span class="string">'the ifft of fft() matkab'</span>,<span class="string">'ifft of 2 half length DFTs'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_30.png" alt=""> <img vspace="5" hspace="5" src="TP3_31.png" alt=""> <h2 id="13">4 Two DFTs for the price of one</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x = triangle(30,60);    <span class="comment">% create x(n) a triangle signal</span>
+y = zeros(1,100);       <span class="comment">% create y(n) a impluse signal</span>
+y(1) = 1;
+
+
+X_0 = fft(x);
+Y_0 = fft(y);
+[X_1,Y_1] = dualFFT(x,y);
+
+figure(1)
+subplot(311)
+hold <span class="string">on</span>;
+title(<span class="string">'absolute value of X compare to matlab fft'</span>);
+plot(abs(X_0),<span class="string">'b'</span>);
+plot(abs(X_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>;
+subplot(312)
+hold <span class="string">on</span>;
+title(<span class="string">'real part of X compare to matlab fft'</span>);
+plot(real(X_0),<span class="string">'b'</span>);
+plot(real(X_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>;
+subplot(313)
+hold <span class="string">on</span>;
+title(<span class="string">'imaginary part of X compare to matlab fft'</span>);
+plot(imag(X_0),<span class="string">'b'</span>);
+plot(imag(X_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>;
+
+
+
+figure(2)
+subplot(311)
+hold <span class="string">on</span>;
+title(<span class="string">'absolute value of Y compare to matlab fft'</span>);
+plot(abs(Y_0),<span class="string">'b'</span>);
+plot(abs(Y_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>
+subplot(312)
+hold <span class="string">on</span>;
+title(<span class="string">'real part of Y compare to matlab fft'</span>);
+plot(real(Y_0),<span class="string">'b'</span>);
+plot(real(Y_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>
+subplot(313)
+hold <span class="string">on</span>;
+title(<span class="string">'imaginary part of Y compare to matlab fft'</span>);
+plot(imag(Y_0),<span class="string">'b'</span>);
+plot(imag(Y_1),<span class="string">'r'</span>);
+legend(<span class="string">'matlab fft'</span>,<span class="string">'2 DFT for pirce of 1'</span>);
+hold <span class="string">off</span>;
+
+<span class="comment">%%%%% reconstruction of original signals</span>
+x_0 = ifft(X_0);
+x_1 = ifft(X_1);
+figure(3);
+hold <span class="string">on</span>;
+plot(real(x_0),<span class="string">'b'</span>);
+plot(real(x_1),<span class="string">'r'</span>);
+legend(<span class="string">'origianl signal'</span>,<span class="string">'price of 1'</span>);
+hold <span class="string">off</span>;
+
+y_0 = ifft(Y_0);
+y_1 = ifft(Y_1);
+figure(4);
+hold <span class="string">on</span>;
+plot(real(y_0),<span class="string">'b'</span>);
+plot(real(y_1),<span class="string">'r'</span>);
+legend(<span class="string">'origianl signal'</span>,<span class="string">'price of 1'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_32.png" alt=""> <img vspace="5" hspace="5" src="TP3_33.png" alt=""> <img vspace="5" hspace="5" src="TP3_34.png" alt=""> <img vspace="5" hspace="5" src="TP3_35.png" alt=""> <h2 id="14">5 A faster DFT for a real sequence</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+x = triangle(30,60);
+X_1 = realFFT(x);
+X_0 = fft(x);
+
+figure(1);
+hold <span class="string">on</span>;
+plot(x)
+plot(real(ifft(X_1)));
+legend(<span class="string">'original signal'</span>,<span class="string">'fster DFT version'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="TP3_36.png" alt=""> <h2 id="15">Applications of the DFT to images</h2><h2 id="16">1. Phase manipulation</h2><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+
+im_1 = imread(<span class="string">'./images/lena.jpg'</span>);
+
+figure(1)
+imshow(im_1);
+
+ima_out1 = phase_only(im_1);
+
+ima_out2 = phase_random(im_1);
+
+ima_out3 = amplitude_random(im_1);
+
+<span class="comment">%%%% Comments: we can see that the phase is much important to define the</span>
+<span class="comment">%%%% contour of the image</span>
+</pre><img vspace="5" hspace="5" src="TP3_37.png" alt=""> <img vspace="5" hspace="5" src="TP3_38.png" alt=""> <img vspace="5" hspace="5" src="TP3_39.png" alt=""> <img vspace="5" hspace="5" src="TP3_40.png" alt=""> <h2 id="17">2. Displace an image using the FFT</h2><h2 id="18">my shift image program</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+im_1 = imread(<span class="string">'./images/lena.jpg'</span>);
+<span class="comment">% do the fft and finde u v which is the number of rows and columns</span>
+im_fft = fftn(double(im_1));
+[u,v]=size(im_fft);
+N = max(u,v); <span class="comment">% if the image is square, then N = u = v</span>
+
+<span class="comment">% x0 y0 are the value we want to shift</span>
+x0 = 100;
+y0 = 250;
+
+<span class="comment">% creat the matrix of extra phase</span>
+vector_u = x0 * [1:u]';
+vector_v = y0 * [1:v];
+
+M = zeros(u,v);
+<span class="keyword">for</span> m = 1:u
+    <span class="keyword">for</span> n = 1:v
+        M(m,n) = vector_u(m) + vector_v(n);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+M_phase = exp(-j*2*pi*M ./N);
+
+new_fft = im_fft .* M_phase;
+
+im_shifted = abs(ifft2(new_fft));
+
+figure();
+imshow(uint8(im_shifted));
+</pre><img vspace="5" hspace="5" src="TP3_41.png" alt=""> <h2 id="19">Use move_images func</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+im_1 = imread(<span class="string">'./images/lena.jpg'</span>);
+figure(1)
+imshow(im_1);
+
+sx = 50;
+sy = 250;
+ima_out = move_image(im_1,sx,sy);
+figure(2)
+imshow(uint8(ima_out));
+</pre><img vspace="5" hspace="5" src="TP3_42.png" alt=""> <img vspace="5" hspace="5" src="TP3_43.png" alt=""> <h2 id="20">3. Simple Fourier Filtering</h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+im_1 = imread(<span class="string">'./images/lena.jpg'</span>);
+
+type = [0,1];
+cutoff = 0.1:0.3:1;
+<span class="keyword">for</span> i = 1:2
+    <span class="keyword">for</span> j = 1:length(cutoff)
+        ima_out = SimpleFiltering(im_1,type(i),cutoff(j));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="TP3_44.png" alt=""> <img vspace="5" hspace="5" src="TP3_45.png" alt=""> <img vspace="5" hspace="5" src="TP3_46.png" alt=""> <img vspace="5" hspace="5" src="TP3_47.png" alt=""> <img vspace="5" hspace="5" src="TP3_48.png" alt=""> <img vspace="5" hspace="5" src="TP3_49.png" alt=""> <img vspace="5" hspace="5" src="TP3_50.png" alt=""> <img vspace="5" hspace="5" src="TP3_51.png" alt=""> <img vspace="5" hspace="5" src="TP3_52.png" alt=""> <img vspace="5" hspace="5" src="TP3_53.png" alt=""> <img vspace="5" hspace="5" src="TP3_54.png" alt=""> <img vspace="5" hspace="5" src="TP3_55.png" alt=""> <img vspace="5" hspace="5" src="TP3_56.png" alt=""> <img vspace="5" hspace="5" src="TP3_57.png" alt=""> <img vspace="5" hspace="5" src="TP3_58.png" alt=""> <img vspace="5" hspace="5" src="TP3_59.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% DFT of simple elementary signals
+%% 1.1
+close all;
+clear all;
+L = 100;                         % length of signal i.e. 100 samples 
+Fs = 1000;                       % sampling frequency in Hz
+n = [0:L-1];                      
+t = n/Fs;                        % time axis in seconds  
+T = 0.11;                        % sine period 
+x = sin(2*pi*t/T);               % the first 100 samples 
+
+figure(1)
+hold on;
+title(['the generated signal f=',num2str(1/T),'Hz']);
+xlabel('Time(s)');
+ylabel('Signal');
+plot(t,x);
+hold off;
+
+dft = fft(x);
+dft_dB = 20 * log10(abs(dft));
+df = Fs/L;                    
+f = n*df;
+
+figure(2)
+hold on;
+title(['magnitude DFT of signal f=',num2str(1/T),'Hz']);
+xlabel('Frequency(Hz)');
+ylabel('the magnitude of DFT(dB)');
+stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),'.');
+hold off;
+
+
+%% 1.2
+close all;
+clear all;
+
+L = 100;                         % length of signal i.e. 100 samples 
+Fs = 1000;                       % sampling frequency in Hz
+n = [0:L-1];                      
+t = n/Fs;                        % time axis in seconds  
+
+T = [0.11, 0.011, 0.005, 0.00125];
+for i = 1:length(T)
+    x =  sin(2*pi*t/T(i));
+    figure(i)
+    
+    subplot(121)
+    hold on;
+    title(['the generated signal f=',num2str(1/T(i)),' Hz']);
+    xlabel('Time(s)');
+    ylabel('Signal');
+    plot(t,x);
+    hold off;
+    
+    dft = fft(x);
+    dft_dB = 20 * log10(abs(dft));
+    df = Fs/L;                    
+    f = n*df;
+
+    subplot(122)
+    hold on;
+    title(['magnitude DFT of signal f=',num2str(1/T(i)),' Hz']);
+    xlabel('Frequency(Hz)');
+    ylabel('the magnitude of DFT(dB)');
+    stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),'.');
+    hold off;
+end
+
+
+%% 1.3
+close all;
+clear all;
+
+L = 100;                         % length of signal i.e. 100 samples 
+Fs = 1000;                       % sampling frequency in Hz
+n = [0:L-1];                      
+t = n/Fs;                        % time axis in seconds  
+
+T = [0.11, 0.011, 0.005,0.00125];
+N = [200, 1000];
+for i = 1:length(T)
+    x =  sin(2*pi*t/T(i));
+    
+    x_pad_200 = [x,zeros(1,N(1)-length(x))];
+    x_pad_1000 = [x,zeros(1,N(2)-length(x))];
+    
+    %x_pad_200 = [zeros(1,N(1)-length(x)),x];
+    %x_pad_1000 = [zeros(1,N(2)-length(x)),x];     
+    
+    % with this code, we can see that it doesnt matter if we padding the 
+    % zeros before or after the signal. we can even put our signal between 
+    % the padding zeros.
+  
+    figure(i)
+    subplot(211)
+    hold on;
+    title(['the generated signal T=',num2str(T(i))]);
+    xlabel('Time(s)');
+    ylabel('Signal');
+    plot(t,x);
+    hold off;
+    
+%generate the ylable values which are the magnitude
+    dft = fft(x);    
+    dft_dB = 20 * log10(abs(dft));
+    
+    dft_pad_200 = fft(x_pad_200);
+    dft_pad_200_dB = 20 * log10(abs(dft_pad_200));
+    
+    dft_pad_1000 = fft(x_pad_1000);
+    dft_pad_1000_dB = 20 * log10(abs(dft_pad_1000));
+    
+% generate the xlabel values
+    df = Fs/L;                    
+    f = n*df;
+        
+    n_pad_200 = [0:N(1)-1];
+    df_pad_200 = Fs/N(1);
+    f_pad_200 = n_pad_200 * df_pad_200;
+    
+    n_pad_1000 = [0:N(2)-1];
+    df_pad_1000 = Fs/N(2);
+    f_pad_1000 = n_pad_1000 * df_pad_1000;
+
+    subplot(212)
+    hold on;
+    title('magnitude of DFT of signal');
+    xlabel('Frequency(Hz)');
+    ylabel('the magnitude of DFT(dB)');
+    stem(f(1:length(f)/2),dft_dB(1:length(dft_dB)/2),'.');
+    plot(f_pad_200(1:length(f_pad_200)/2),dft_pad_200_dB(1:length(dft_pad_200_dB)/2),'r');
+    plot(f_pad_1000(1:length(f_pad_1000)/2),dft_pad_1000_dB(1:length(dft_pad_1000_dB)/2),'g');
+    legend('x','x pad 200','x pad 1000')
+    hold off;
+end
+
+
+%% 2.1
+close all;
+clear all;
+n = [0, 1, 10, 50, 80];
+for i = 1:length(n)
+    x = xn(n(i));
+    t = 0:length(x)-1;
+    xf = fft(x);
+    
+    figure(i);
+    subplot(311);
+    hold on;
+    title(['impulse signal x[',num2str(n(i)),']']);
+    xlabel('n');
+    ylabel('x[n]');
+    plot(t,x);
+    hold off;
+    
+    subplot(312);
+    hold on;
+    title(['the DFT of impulse signal x[',num2str(n(i)),']']);
+    xlabel('k');
+    ylabel('magnitude of X[k](linear scale)');
+    plot(abs(xf)); 
+    hold off;
+    
+    subplot(313);
+    hold on;
+    title(['the DFT of impulse signal x[',num2str(n(i)),']']);
+    xlabel('k');
+    ylabel('phase of X[k]');
+    plot(unwrap(phase(xf))); 
+    hold off;
+end
+
+
+%% 2.2
+close all;
+clear all;
+
+centre = 30;
+width = 60;
+x_tri = triangle(centre, width);
+xf_tri = fft(x_tri);
+xf_tri_mag = 20*log10(abs(xf_tri));
+xf_tri_pha = phase(xf_tri);
+
+figure()
+subplot(311);
+hold on;
+title(['triangle signal center at ',num2str(centre),' width=',num2str(width)]);
+xlabel('sampled number');
+ylabel('x[n]');
+plot([0:99],x_tri);
+hold off;
+
+subplot(312);
+hold on;
+title(['DFT of triangle signal center at ',num2str(centre),' width=',num2str(width)]);
+xlabel('k');
+ylabel('magnitude of X[k] (dB)');
+stem([0:49],xf_tri_mag(1:50),'.');
+hold off;
+
+subplot(313);
+hold on;
+xlabel('k');
+ylabel('phase of X[k] (rad)');
+plot([0:49],xf_tri_pha(1:50));
+
+
+%% 2.3
+close all;
+clear all;
+x_tri = triangle(30, 60);
+xf_tri = fft(x_tri);
+n = [0, 1, 10, 50, 80];
+for i = 1:length(n)
+    x = xn((n(i)+1));
+    xf = fft(x);
+    product = xf .* xf_tri;
+    resulting_signal = ifft(product);
+    figure(i);
+    hold on;
+    title(['convlution of impluse x[', num2str(n(i)), '] and triangle signals']);
+    xlabel('n');
+    ylabel('resulting signal');
+%     plot([0:99],real(resulting_signal));
+    stem([0:99],real(resulting_signal),'.');        % due to matlab cannot start a serie from 0,
+                                                    % so we have a shift of
+                                                    % 2, because each
+                                                    % signal has a shift of
+                                                    % 1, and they did a
+                                                    % convlotion.                                   
+end
+
+
+%% 2.4
+% Circular convolution
+clear all;
+close all;
+x_tri = triangle(30, 60);
+xf_tri = fft(x_tri);
+
+product = xf_tri .* xf_tri;
+figure()
+hold on;
+title('inverse of the product of triangle signal DFT with itself');
+xlabel('n');
+ylabel('resulting signal');
+plot(real(ifft(product)));
+hold off
+% due to the circular convolution, so we met the problem of 'overlay' that at the
+% beginning of the signal, it is the sum of the fisrt several values of the
+% signal with the last several values of the signal.
+
+% in order to avoid this problem, we could pad enough 0s in the original
+% signals to seperate it in the circular conlution.
+x_tri_pad = [x_tri,zeros(1,20)]; % here I pad 20 zeros, because the bandwidth of 
+% the triangle is 60, and it is a 100 length signal, which means there are
+% alreay 40 zeros, so we just need to add 20 zeros.
+xf_tri_pad = fft(x_tri_pad);
+product_pad = xf_tri_pad .* xf_tri_pad;
+figure()
+hold on;
+title('inverse of the product of triangle signal padded DFT with itself');
+xlabel('n');
+ylabel('resulting signal');
+plot(real(ifft(product_pad)));
+hold off;
+
+figure()
+hold on;
+title('convolution direct of triangle signal with itself');
+xlabel('n');
+ylabel('resulting signal');
+plot(cconv(x_tri,x_tri));
+hold off;
+
+figure()
+hold on;
+title('compare the three signal');
+plot(cconv(x_tri,x_tri));
+plot(real(ifft(product)));
+plot(real(ifft(product_pad)));
+legend('conv in time domain','circular conv without padding 0s','circular conv with padding 0s')
+hold off;
+
+
+
+%% Implementation tricks for the DFT
+%% 3 The Fast Fourier Transform
+%% the definition method
+close all;
+clear all;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+for k = 1:N
+    DFTeven = 0;
+    DFTodd = 0;
+    for n2 = 1 : N/2
+        DFTeven =DFTeven + x_tri(2*n2-1) * exp(-j*2*pi*(k-1)*n2 ./(N/2)); 
+        DFTodd =DFTodd +  x_tri(2*n2)* exp(-j*2*pi*(k-1)*n2 ./(N/2));
+        % in matlab, the array starts from 1, so the x[0] is the first
+        % element in matlab, so here, even is 1 3 5.., and odd is 2 4 6..
+    end
+    XN(k) = DFTeven + exp(-j*2*pi*(k-1)./N) .* DFTodd;
+    % be careful here the k should also star from 0,
+end
+
+figure()
+hold on;
+title('Compare the absolute value of the FFT with matlab fft()');
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend('using whole length DFT','using 2 half length DFTs');
+hold off;
+
+x_rec = real(ifft(XN));
+figure()
+hold on;
+title('Compare the reconstruction signal');
+plot([0:99],real(ifft(xf_tri)));
+plot([0:97],x_rec(3:end)); %here we shift to right by 2 units, because of the matlab start from 1 and then we have a shift of 1 for each than it cumulate to 2
+legend('the ifft of fft() matkab','ifft of 2 half length DFTs');
+hold off;
+
+%% the matrix method
+close all;
+clear all;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+x_even = x_tri(1:2:end);
+x_odd = x_tri(2:2:end);
+
+% create a matrix of n2 rows and k columns to represent the exp term in the
+% formula
+k = 0:N-1; % be careful here the k start from 0!
+n2 = 1:N/2;
+k_n2 = n2' * k;
+matrix = exp(-j*2*pi*k_n2/(N/2));       % here the matrix is exp term
+
+% do the DFT
+DFTeven = x_even * matrix;
+DFTodd = x_odd * matrix;
+XN = DFTeven + DFTodd .* exp(-j*2*pi*k/N);
+
+figure()
+hold on;
+title('Compare the absolute value of the FFT with matlab fft()');
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend('using whole length DFT','using 2 half length DFTs');
+hold off;
+
+x_rec = real(ifft(XN));
+figure()
+hold on;
+title('Compare the reconstruction signal');
+plot([0:99],real(ifft(xf_tri)));
+plot([0:97],x_rec(3:end));
+legend('the ifft of fft() matkab','ifft of 2 half length DFTs');
+hold off;
+
+
+%% the DFT method
+close all;
+clear all;
+x_tri = triangle(30,60);
+xf_tri = fft(x_tri);
+
+N = length(x_tri);
+XN = zeros(1,N/2);
+
+x_even = x_tri(1:2:end);
+x_odd = x_tri(2:2:end);
+xf_even = [fft(x_even),fft(x_even)];
+xf_odd = [fft(x_odd),fft(x_odd)];
+
+
+for k = 1: 100   
+    XN(k) = xf_even(k) + exp(-j*2*pi*(k-1)./N) .* xf_odd(k);
+end
+% be careful here the k should start from 0!
+
+
+figure()
+hold on;
+title('Compare the absolute value of the FFT with matlab fft()');
+plot([0:99],abs(xf_tri));
+plot([0:99],abs(XN));
+legend('using whole length DFT','using 2 half length DFTs');
+hold off;
+
+figure()
+hold on;
+title('Compare the reconstruction signal');
+plot([0:99],real(ifft(xf_tri)));
+plot([0:99],real(ifft(XN)));
+legend('the ifft of fft() matkab','ifft of 2 half length DFTs');
+hold off;
+
+%% 4 Two DFTs for the price of one
+close all;
+clear all;
+x = triangle(30,60);    % create x(n) a triangle signal 
+y = zeros(1,100);       % create y(n) a impluse signal
+y(1) = 1;
+
+
+X_0 = fft(x);
+Y_0 = fft(y);
+[X_1,Y_1] = dualFFT(x,y);
+
+figure(1)
+subplot(311)
+hold on;
+title('absolute value of X compare to matlab fft');
+plot(abs(X_0),'b');
+plot(abs(X_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off;
+subplot(312)
+hold on;
+title('real part of X compare to matlab fft');
+plot(real(X_0),'b');
+plot(real(X_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off;
+subplot(313)
+hold on;
+title('imaginary part of X compare to matlab fft');
+plot(imag(X_0),'b');
+plot(imag(X_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off;
+
+
+
+figure(2)
+subplot(311)
+hold on;
+title('absolute value of Y compare to matlab fft');
+plot(abs(Y_0),'b');
+plot(abs(Y_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off
+subplot(312)
+hold on;
+title('real part of Y compare to matlab fft');
+plot(real(Y_0),'b');
+plot(real(Y_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off
+subplot(313)
+hold on;
+title('imaginary part of Y compare to matlab fft');
+plot(imag(Y_0),'b');
+plot(imag(Y_1),'r');
+legend('matlab fft','2 DFT for pirce of 1');
+hold off;
+
+%%%%% reconstruction of original signals
+x_0 = ifft(X_0);
+x_1 = ifft(X_1);
+figure(3);
+hold on;
+plot(real(x_0),'b');
+plot(real(x_1),'r');
+legend('origianl signal','price of 1');
+hold off;
+
+y_0 = ifft(Y_0);
+y_1 = ifft(Y_1);
+figure(4);
+hold on;
+plot(real(y_0),'b');
+plot(real(y_1),'r');
+legend('origianl signal','price of 1');
+hold off;
+
+
+%% 5 A faster DFT for a real sequence
+close all;
+clear all;
+x = triangle(30,60);
+X_1 = realFFT(x);
+X_0 = fft(x);
+
+figure(1);
+hold on;
+plot(x)
+plot(real(ifft(X_1)));
+legend('original signal','fster DFT version');
+hold off;
+
+
+
+
+
+%% Applications of the DFT to images
+%% 1. Phase manipulation
+clear all;
+close all;
+
+im_1 = imread('./images/lena.jpg');
+
+figure(1)
+imshow(im_1);
+
+ima_out1 = phase_only(im_1);
+
+ima_out2 = phase_random(im_1);
+
+ima_out3 = amplitude_random(im_1);
+
+%%%% Comments: we can see that the phase is much important to define the
+%%%% contour of the image
+
+%% 2. Displace an image using the FFT
+%% my shift image program
+close all;
+clear all;
+im_1 = imread('./images/lena.jpg');
+% do the fft and finde u v which is the number of rows and columns
+im_fft = fftn(double(im_1));
+[u,v]=size(im_fft);
+N = max(u,v); % if the image is square, then N = u = v
+
+% x0 y0 are the value we want to shift  
+x0 = 100; 
+y0 = 250;
+
+% creat the matrix of extra phase 
+vector_u = x0 * [1:u]';
+vector_v = y0 * [1:v];
+
+M = zeros(u,v);
+for m = 1:u
+    for n = 1:v
+        M(m,n) = vector_u(m) + vector_v(n);
+    end
+end
+
+M_phase = exp(-j*2*pi*M ./N);
+
+new_fft = im_fft .* M_phase;
+
+im_shifted = abs(ifft2(new_fft));
+
+figure();
+imshow(uint8(im_shifted));
+
+
+%% Use move_images func
+close all;
+clear all;
+
+im_1 = imread('./images/lena.jpg');
+figure(1)
+imshow(im_1);
+
+sx = 50;
+sy = 250;
+ima_out = move_image(im_1,sx,sy);
+figure(2)
+imshow(uint8(ima_out));
+
+
+%% 3. Simple Fourier Filtering
+close all;
+clear all;
+
+im_1 = imread('./images/lena.jpg');
+
+type = [0,1];
+cutoff = 0.1:0.3:1;
+for i = 1:2
+    for j = 1:length(cutoff)
+        ima_out = SimpleFiltering(im_1,type(i),cutoff(j));
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
